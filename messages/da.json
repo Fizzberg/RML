@@ -1,0 +1,49 @@
+{
+  "app": {
+    "name": "RML",
+    "tagline": "Strukturerede lejeboligvurderinger i Danmark"
+  },
+  "nav": {
+    "home": "Forside",
+    "search": "Søg",
+    "addresses": "Adresser",
+    "companies": "Virksomheder",
+    "moderation": "Moderation",
+    "account": "Konto",
+    "login": "Log ind",
+    "signup": "Opret konto"
+  },
+  "footer": {
+    "legal": "Juridisk",
+    "privacy": "Privatlivspolitik",
+    "terms": "Vilkår",
+    "imprint": "Imprint"
+  },
+  "home": {
+    "title": "RML",
+    "subtitle": "Et review-værktøj for lejere i Danmark."
+  },
+  "auth": {
+    "login": {
+      "title": "Log ind"
+    },
+    "signup": {
+      "title": "Opret konto"
+    }
+  },
+  "address": {
+    "title": "Adresse",
+    "loading": "Indlæser adresse …"
+  },
+  "company": {
+    "title": "Virksomhed",
+    "loading": "Indlæser virksomhed …"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "restricted": "Adgang er begrænset til moderatorer og administratorer."
+  },
+  "common": {
+    "scaffoldNotice": "Denne side er en arkitekturskal — der er ingen funktionalitet endnu."
+  }
+}

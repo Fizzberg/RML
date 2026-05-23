@@ -1,0 +1,49 @@
+{
+  "app": {
+    "name": "RML",
+    "tagline": "Structured tenancy reviews in Denmark"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "addresses": "Addresses",
+    "companies": "Companies",
+    "moderation": "Moderation",
+    "account": "Account",
+    "login": "Log in",
+    "signup": "Sign up"
+  },
+  "footer": {
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "imprint": "Imprint"
+  },
+  "home": {
+    "title": "RML",
+    "subtitle": "A review tool for tenants in Denmark."
+  },
+  "auth": {
+    "login": {
+      "title": "Log in"
+    },
+    "signup": {
+      "title": "Sign up"
+    }
+  },
+  "address": {
+    "title": "Address",
+    "loading": "Loading address …"
+  },
+  "company": {
+    "title": "Company",
+    "loading": "Loading company …"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "restricted": "Access is restricted to moderators and admins."
+  },
+  "common": {
+    "scaffoldNotice": "This page is an architecture shell — no functionality yet."
+  }
+}

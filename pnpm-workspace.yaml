@@ -1,0 +1,6 @@
+# pnpm 11 settings. The package.json `pnpm` field is no longer honoured.
+# Approve native-build scripts for trusted dependencies here.
+
+allowBuilds:
+  sharp: true
+  unrs-resolver: true

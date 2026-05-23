@@ -1,0 +1,56 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Env files (only .env.example is committed)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / IDE
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Vercel
+.vercel
+
+# Turbo
+.turbo/
+
+# Next-generated typings (committed by some teams; we regenerate)
+next-env.d.ts
+
+# Supabase local
+supabase/.branches
+supabase/.temp
+
+# TypeScript
+*.tsbuildinfo

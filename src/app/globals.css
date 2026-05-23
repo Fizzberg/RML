@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Neutral, restrained palette — stone-leaning warm greys. */
+    --background: 40 12% 98%;
+    --foreground: 24 10% 12%;
+
+    --surface: 0 0% 100%;
+    --surface-foreground: 24 10% 12%;
+
+    --muted: 30 8% 94%;
+    --muted-foreground: 24 6% 40%;
+
+    --primary: 24 10% 18%;
+    --primary-foreground: 40 12% 98%;
+
+    --destructive: 0 70% 38%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 6% 88%;
+    --input: 30 6% 88%;
+    --ring: 24 10% 30%;
+  }
+
+  .dark {
+    --background: 24 8% 8%;
+    --foreground: 30 8% 92%;
+
+    --surface: 24 8% 11%;
+    --surface-foreground: 30 8% 92%;
+
+    --muted: 24 6% 16%;
+    --muted-foreground: 30 6% 64%;
+
+    --primary: 30 8% 92%;
+    --primary-foreground: 24 8% 12%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 24 6% 20%;
+    --input: 24 6% 20%;
+    --ring: 30 6% 60%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings:
+      'cv11' on,
+      'ss01' on,
+      'kern' on;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Respect users who don't want motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Visible, accessible focus states. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
