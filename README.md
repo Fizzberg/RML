@@ -316,6 +316,7 @@ the project; they are binding.
 | [`docs/API_INTEGRATIONS.md`](./docs/API_INTEGRATIONS.md) | DAR / BBR / CVR — live-MVP vs imported-cache strategy, key handling, DTO boundary. |
 | [`docs/DESIGN_PRINCIPLES.md`](./docs/DESIGN_PRINCIPLES.md) | UX philosophy, information density, moderation visibility, WCAG 2.2 AA baseline, anti-patterns. |
 | [`docs/SCHEMA_REVIEW.md`](./docs/SCHEMA_REVIEW.md) | v1 schema proposal — resolved decisions, hardening pass, local-apply verification, still-open questions. |
+| [`docs/PRODUCT_NOTES.md`](./docs/PRODUCT_NOTES.md) | Living, collaborative thinking space — exploratory product direction, UX notes, open questions, ideas in flight. Safe place to drop unfinished thoughts; contradictions and reorganisation are expected. Explicitly **not** a spec — anything binding lives in `docs/PRODUCT_DECISIONS.md` and the other governance docs. |
 
 ---
 
