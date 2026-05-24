@@ -168,9 +168,24 @@ rationale and the still-open questions.
 
 **Seed data.** The CLI is configured (in `supabase/config.toml`) to look
 for `supabase/seed.sql` and apply it after migrations during `db reset`.
-The file **does not exist yet**, so the CLI prints a benign warning on
-reset (`no files matched pattern: supabase/seed.sql`) — that is expected
-until we add dev seed data and the first-admin promotion.
+The file is present and minimal — local-dev-only fictional data:
+
+- 3 `auth.users` rows (`admin@dev.local`, `renter-aarhus@dev.local`,
+  `tenant-cph@dev.local`), each backed by a `profiles` row produced by
+  the auth-user trigger; the first is promoted to `role = 'admin'`.
+- 3 buildings, 4 fictional Danish-style addresses, 3 dwellings.
+- 3 companies with the `(DEV ONLY)` suffix and CVR numbers starting `99…`.
+- 4 reviews covering the lifecycle: 2 approved (one company-linked, one
+  address-only / private-landlord case), 1 pending, 1 rejected with
+  `is_high_risk = true`.
+- 8 `moderation_events` rows reflecting each review's lifecycle, plus
+  one `role_changed` event for the initial admin promotion.
+
+No real names, no real addresses, no real CVRs, no real reviews. See the
+file header for the full do-not-list. Password sign-in via Supabase Auth
+is intentionally not enabled by the seed — `auth.identities` is not
+populated. Read-side browsing of public views and Studio inspection work
+out of the box.
 
 **No destructive operations against any remote DB.** This repo runs only
 against the local CLI stack at the moment. Schema changes that are
@@ -317,7 +332,9 @@ gaps the maintainer accepts at this stage.
 - Storage buckets `review-photos` and `verification-documents` are
   documented in the schema and `docs/SECURITY_RULES.md` §3 but **not yet
   created** in the local stack.
-- No `supabase/seed.sql` — `db reset` prints a benign warning.
+- `supabase/seed.sql` exists and is minimal — local-dev fictional rows
+  only. Password sign-in is not yet enabled by the seed
+  (`auth.identities` is intentionally not populated).
 - No retention sweeper for `verification_documents` —
   `retention_expires_at` defaults to 90 days but nothing acts on it yet.
 - No first-admin bootstrap RPC — the first `admin` is promoted via a
@@ -337,10 +354,10 @@ gaps the maintainer accepts at this stage.
 Indicative — not commitments. See `docs/PRODUCT_DECISIONS.md` for the
 binding direction.
 
-- Add `supabase/seed.sql` with a minimal dev dataset (a handful of
-  addresses, companies, and a first-admin profile).
 - Wire Supabase Auth into the `(auth)/login` and `(auth)/signup` routes;
-  add a Supabase session-refresh middleware.
+  add a Supabase session-refresh middleware. (Once login is wired, extend
+  the seed to populate `auth.identities` so the seeded users can actually
+  sign in.)
 - Implement the route-level role guard for `(admin)/` using
   `server/auth/require-role.ts`.
 - Create the two private storage buckets and implement the server route
