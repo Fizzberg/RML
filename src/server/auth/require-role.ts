@@ -1,37 +1,28 @@
 import 'server-only';
 
-import { getCurrentUser } from './get-session';
+import { getCurrentProfile, type AppRole } from './get-current-profile';
 
-/**
- * The role enum source of truth lives in `profiles.role` (see
- * `docs/SECURITY_RULES.md` §12). Application code reads it through here; it
- * is never derived from a client-supplied claim.
- */
-export type AppRole = 'user' | 'moderator' | 'admin';
+export type { AppRole };
 
 /**
  * Resolve the calling user's role by reading `profiles.role`.
  *
- * Fails closed: if there is no session, or no `profiles` row, returns `null`.
- * Callers that require a role must treat `null` as denial.
- *
- * Scaffold only — the actual `profiles` repository will be implemented when
- * the auth feature is built. Today this returns `null` so privileged code
- * cannot accidentally pass a role check.
+ * Fail-closed: if there is no session, the profile row is missing, the
+ * profile is tombstoned, or Supabase is not configured, this returns
+ * `null`. Callers that require a role must treat `null` as denial.
  */
 export async function getCurrentRole(): Promise<AppRole | null> {
-  const user = await getCurrentUser();
-  if (!user) return null;
-
-  // TODO(auth): read role from `profiles` via the profiles repository once it
-  // exists. Until then, fail closed — see docs/SECURITY_RULES.md §13.
-  return null;
+  const profile = await getCurrentProfile();
+  return profile?.role ?? null;
 }
 
 /**
- * Assert that the caller has one of the allowed roles. Throws a generic error
- * otherwise — UI surfaces a generic message; details stay in server logs
- * (see `docs/SECURITY_RULES.md` §4).
+ * Assert that the caller has one of the allowed roles. Throws a generic
+ * 'forbidden' error otherwise — surface that as a generic message to the
+ * user (per `docs/SECURITY_RULES.md` §4); details stay in server logs.
+ *
+ * Layouts and pages that want a redirect-on-forbidden behaviour should use
+ * `getCurrentProfile()` directly and call `redirect()` themselves.
  */
 export async function requireRole(allowed: readonly AppRole[]): Promise<AppRole> {
   const role = await getCurrentRole();

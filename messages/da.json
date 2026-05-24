@@ -11,7 +11,9 @@
     "moderation": "Moderation",
     "account": "Konto",
     "login": "Log ind",
-    "signup": "Opret konto"
+    "signup": "Opret konto",
+    "logout": "Log ud",
+    "signedInAs": "Logget ind som {name}"
   },
   "footer": {
     "legal": "Juridisk",
@@ -25,10 +27,26 @@
   },
   "auth": {
     "login": {
-      "title": "Log ind"
+      "title": "Log ind",
+      "subtitle": "Indtast din e-mail og adgangskode.",
+      "submit": "Log ind",
+      "linkToSignup": "Har du ikke en konto endnu?"
     },
     "signup": {
-      "title": "Opret konto"
+      "title": "Opret konto",
+      "subtitle": "Opret en konto for at sende anmeldelser.",
+      "submit": "Opret konto",
+      "linkToLogin": "Har du allerede en konto?"
+    },
+    "fields": {
+      "email": "E-mail",
+      "password": "Adgangskode",
+      "passwordHelp": "Mindst 6 tegn."
+    },
+    "errors": {
+      "invalidInput": "Tjek venligst din e-mail og adgangskode.",
+      "invalidCredentials": "Forkert e-mail eller adgangskode.",
+      "signUpFailed": "Oprettelse mislykkedes. Prøv igen."
     }
   },
   "address": {

@@ -11,7 +11,9 @@
     "moderation": "Moderation",
     "account": "Account",
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "logout": "Log out",
+    "signedInAs": "Signed in as {name}"
   },
   "footer": {
     "legal": "Legal",
@@ -25,10 +27,26 @@
   },
   "auth": {
     "login": {
-      "title": "Log in"
+      "title": "Log in",
+      "subtitle": "Enter your email and password.",
+      "submit": "Log in",
+      "linkToSignup": "Don't have an account yet?"
     },
     "signup": {
-      "title": "Sign up"
+      "title": "Sign up",
+      "subtitle": "Create an account to submit reviews.",
+      "submit": "Sign up",
+      "linkToLogin": "Already have an account?"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "passwordHelp": "At least 6 characters."
+    },
+    "errors": {
+      "invalidInput": "Please check your email and password.",
+      "invalidCredentials": "Invalid email or password.",
+      "signUpFailed": "Sign-up failed. Please try again."
     }
   },
   "address": {
