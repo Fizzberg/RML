@@ -45,5 +45,15 @@
   },
   "common": {
     "scaffoldNotice": "Denne side er en arkitekturskal — der er ingen funktionalitet endnu."
+  },
+  "dev": {
+    "publicData": {
+      "title": "Offentlige data — lokal udvikling",
+      "notice": "Kun til lokal udvikling. Læser via public_*-views. Ikke en produktside.",
+      "addresses": "Adresser",
+      "companies": "Virksomheder",
+      "reviews": "Godkendte anmeldelser",
+      "empty": "ingen rækker"
+    }
   }
 }

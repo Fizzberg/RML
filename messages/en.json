@@ -45,5 +45,15 @@
   },
   "common": {
     "scaffoldNotice": "This page is an architecture shell — no functionality yet."
+  },
+  "dev": {
+    "publicData": {
+      "title": "Public data — local dev",
+      "notice": "Local development only. Reads via public_* views. Not a product page.",
+      "addresses": "Addresses",
+      "companies": "Companies",
+      "reviews": "Approved reviews",
+      "empty": "no rows"
+    }
   }
 }
