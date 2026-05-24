@@ -158,11 +158,18 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 
 -- -----------------------------------------------------------------------------
--- 2. SHARED HELPER FUNCTIONS
+-- 2. SHARED HELPER FUNCTIONS (table-independent)
 -- -----------------------------------------------------------------------------
+-- Only functions whose bodies do NOT reference application tables may live
+-- here, because this section runs before any table is created. The role
+-- helpers `is_moderator_or_admin()` / `is_admin()` reference `public.profiles`
+-- in their SQL body and therefore live in §3.1.1 — right after the profiles
+-- table is created. (LANGUAGE sql parses the body at CREATE FUNCTION time,
+-- so the relation must already exist; PL/pgSQL would defer parsing, but
+-- moving the definitions is simpler than switching languages.)
 
 -- Updated-at trigger function — invoked by tg_set_updated_at on each mutable
--- table.
+-- table. References no application tables; safe to define here.
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -172,49 +179,6 @@ BEGIN
   RETURN NEW;
 END;
 $$;
-
--- Convenience: is the calling user a moderator or admin?
--- Used inside RLS policies. SECURITY DEFINER so the policy can read profiles
--- regardless of the caller's RLS on profiles. Marked STABLE so the planner
--- can cache the result within a statement.
-CREATE OR REPLACE FUNCTION public.is_moderator_or_admin()
-RETURNS boolean
-LANGUAGE sql
-SECURITY DEFINER
-SET search_path = public
-STABLE
-AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.profiles p
-    WHERE p.id = auth.uid()
-      AND p.role IN ('moderator', 'admin')
-  );
-$$;
-
-CREATE OR REPLACE FUNCTION public.is_admin()
-RETURNS boolean
-LANGUAGE sql
-SECURITY DEFINER
-SET search_path = public
-STABLE
-AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.profiles p
-    WHERE p.id = auth.uid()
-      AND p.role = 'admin'
-  );
-$$;
-
--- Explicit EXECUTE grants. Both helpers inspect only the caller's own
--- auth.uid() (they cannot be coerced into checking another user's role),
--- so granting to anon is safe. Hardened Supabase setups that strip default
--- PUBLIC grants on public-schema functions would otherwise silently break
--- the RLS policies that depend on these.
-REVOKE ALL ON FUNCTION public.is_moderator_or_admin() FROM public;
-GRANT EXECUTE ON FUNCTION public.is_moderator_or_admin() TO anon, authenticated;
-
-REVOKE ALL ON FUNCTION public.is_admin() FROM public;
-GRANT EXECUTE ON FUNCTION public.is_admin() TO anon, authenticated;
 
 
 -- -----------------------------------------------------------------------------
@@ -287,6 +251,56 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 -- touch; these column grants gate which COLUMNS. Both layers must allow.
 REVOKE UPDATE ON public.profiles FROM anon, authenticated;
 GRANT UPDATE (display_name, locale) ON public.profiles TO authenticated;
+
+
+-- 3.1.1 Role helper functions (must come after profiles) ----------------------
+-- LANGUAGE sql parses the function body at CREATE FUNCTION time, so the
+-- referenced `public.profiles` table must already exist. These helpers were
+-- previously declared in §2; they are defined here to fix migration ordering.
+--
+-- SECURITY DEFINER so the policy can read profiles regardless of the
+-- caller's RLS on profiles. STABLE so the planner can cache the result
+-- within a statement.
+
+-- Convenience: is the calling user a moderator or admin?
+CREATE OR REPLACE FUNCTION public.is_moderator_or_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = auth.uid()
+      AND p.role IN ('moderator', 'admin')
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = auth.uid()
+      AND p.role = 'admin'
+  );
+$$;
+
+-- Explicit EXECUTE grants. Both helpers inspect only the caller's own
+-- auth.uid() (they cannot be coerced into checking another user's role),
+-- so granting to anon is safe. Hardened Supabase setups that strip default
+-- PUBLIC grants on public-schema functions would otherwise silently break
+-- the RLS policies that depend on these.
+REVOKE ALL ON FUNCTION public.is_moderator_or_admin() FROM public;
+GRANT EXECUTE ON FUNCTION public.is_moderator_or_admin() TO anon, authenticated;
+
+REVOKE ALL ON FUNCTION public.is_admin() FROM public;
+GRANT EXECUTE ON FUNCTION public.is_admin() TO anon, authenticated;
 
 
 -- 3.2 buildings ---------------------------------------------------------------

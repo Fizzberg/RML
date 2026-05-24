@@ -10,9 +10,11 @@ the database stops being a blank slate.
 **v1 status:** the eleven major design choices that gated the first draft
 have been resolved with explicit, documented decisions (§1 below). A static
 review pass then identified four critical bugs and six important hardening
-gaps; all ten have been addressed in the SQL (see §1.12 for the hardening
-summary and §9 for the much-trimmed still-open list). The proposal is now
-safe for local apply / testing.
+gaps; an attempted local `supabase start` surfaced one further ordering
+issue (L-1 in §1.12). All eleven findings are addressed in the SQL, and
+the migration has been **applied successfully against a local Supabase
+stack** (`supabase start` + `supabase db reset` clean, see §1.13). Local
+apply / testing is no longer aspirational — it is verified.
 
 Read together with the binding governance:
 
@@ -253,12 +255,42 @@ are addressed in the SQL. Summary:
 | **I-4** | `handle_new_auth_user` would fail signup if `raw_user_meta_data.locale` was anything other than `da` / `en`. | Locale is now sanitised — anything not in `('da', 'en')` (including NULL, empty string, JSON injection attempts) falls back to `'da'`. |
 | **I-5** | `is_moderator_or_admin()` and `is_admin()` had no explicit EXECUTE grants — hardened Supabase setups that drop default PUBLIC grants would silently break the RLS policies. | Explicit `REVOKE ALL … FROM public` + `GRANT EXECUTE … TO anon, authenticated`. |
 | **I-6** | `tenancy_review_revisions`, `review_photos`, and `verification_documents` had the same column-grant gap as profiles/reviews. | All three now `REVOKE UPDATE … FROM anon, authenticated;` with narrow GRANTs (content-only on revisions; caption-only on photos; nothing on verification documents — its `evidence_update_uploader` policy is dormant by design). |
+| **L-1** *(local-apply)* | Role helpers `is_moderator_or_admin()` / `is_admin()` are `LANGUAGE sql`, whose bodies are parsed at `CREATE FUNCTION` time. They were defined in §2 — *before* `public.profiles` was created in §3.1 — so the first `supabase start` raised `relation "public.profiles" does not exist`. | The two helpers (and their `REVOKE ALL` / `GRANT EXECUTE` statements) moved to a new sub-section §3.1.1, immediately after the `profiles` table is created. §2 now contains only the table-independent `set_updated_at()` and an explanatory comment. No behaviour change; pure ordering fix. |
 
 Three minor cleanups were also applied while the file was open:
 
 - The unused `citext` extension was removed.
 - A partial index `WHERE deleted_at IS NOT NULL` was added to `profiles` for tombstone-cleanup queries.
 - The published-recency partial index now also requires `published_at IS NOT NULL` so the index never holds NULL keys.
+
+### 1.13 Local apply verification
+
+The corrected migration has been applied against a local Supabase stack
+and the result observed end-to-end:
+
+- **`supabase start`** completed successfully — the local Postgres + Studio
+  + Auth + Storage + (etc.) containers came up without error.
+- **`supabase db reset`** completed successfully against the fresh database,
+  re-applying every migration in `supabase/migrations/` from scratch.
+- The single migration `20260524000000_schema_v1_proposal.sql` **applied
+  cleanly** in one transaction — extensions, enums, tables, indexes, RLS
+  policies, public views, RPCs, triggers, and column grants all created
+  without errors.
+- The only diagnostic output was a series of `NOTICE: … does not exist,
+  skipping` messages. These are **expected and benign**: every `DROP POLICY
+  IF EXISTS` / `DROP TRIGGER IF EXISTS` statement in the migration (used to
+  keep the file idempotent per `CLAUDE.md` §5) emits this NOTICE when the
+  dropped object hasn't been created yet, which is always the case on a
+  fresh database. They are informational, not errors.
+- A warning that **`supabase/seed.sql` was not found** is also expected.
+  v1 does not yet ship a development seed file. Reference data (DAR / BBR
+  / CVR) has no application write path until the import pipeline lands
+  (§9 item 8), and the first-admin promotion is an out-of-band manual
+  step (§1.10). A `supabase/seed.sql` for local dev convenience may be
+  added later as a separate change; its absence is not a defect.
+
+The "safe for local apply / testing" readiness claim is now **empirically
+verified**, not just plausible from review.
 
 ---
 
@@ -568,6 +600,7 @@ The schema deliberately makes the legally-sensitive surfaces narrow:
 - **Applied to any environment:** No.
 - **Commits:** None yet (proposal stage).
 - **Resolved v1 decisions:** 11 (§1.1 – §1.11). All reflected in the SQL.
-- **Resolved review findings:** 10 (4 critical + 6 important — see §1.12).
+- **Resolved review findings:** 11 (4 critical + 6 important + 1 local-apply ordering — see §1.12).
 - **Still-open questions:** 8 (§9). None block applying the migration.
-- **Readiness:** safe for local apply / testing.
+- **Local apply:** verified via `supabase start` + `supabase db reset` — clean apply, only expected idempotency notices, expected `seed.sql`-missing warning (see §1.13).
+- **Readiness:** safe for local apply / testing — verified.
