@@ -82,11 +82,32 @@ These are becoming more concrete but are still evolving.
 > moderation checks happen →
 > review is published / flagged / held back.
 
-Current lean:
-- structured-first
-- free text secondary
-- moderation before publication
-- low friction if possible
+Thoughts about this:
+
+  - User should probably search for the address first
+  - review belongs to an address, not the other way around
+
+check if:
+  - the address already exists (public address autofill possibility like at post shops? -> no mistakes and duplicates)
+  - there are existing reviews connected -> already know the landlord/company?
+
+  missing data:
+  - reviewer needs to add that information (verify landlord at address once/first user needs to upload smt?)
+
+  about Verification:
+  - Feels important for trust
+  - Also feels like a major drop-off risk
+  - Not sure where in the flow it should happen
+
+  about review form:
+  - guided process feels better than one long scrollable form
+  - A few mandatory questions/structured first
+  - Additional information like free text should be optional, maybe quick overview with buttons with + to add part?
+
+  after submission:
+  - Users should get clear feedback about what happens next/failure/success
+  - Explain moderation/publication status (moderation hybrid model that quickly checks before publication and flags if human check needed, see next part below)
+  - Give some indication of when the review is expected to go live (liek seen on DBA)
 
 
 ### Automatic moderation flow
